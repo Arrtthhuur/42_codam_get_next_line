@@ -6,86 +6,145 @@
 /*   By: abeznik <abeznik@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/08 18:17:34 by abeznik       #+#    #+#                 */
-/*   Updated: 2021/11/16 16:36:00 by abeznik       ########   odam.nl         */
+/*   Updated: 2021/11/18 13:32:36 by abeznik       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-#include <stdio.h> //printf
-#include <unistd.h> //read
-#include <stdlib.h> //free
+#include <unistd.h> // read
+#include <stdlib.h> // free
+#include <stdio.h>
 
 #define MAX_FD 1024
 
-static char	*get_line(char *line)
+/*
+** Join line and buff to tmp and free line.
+*/
+static char	*join_free(char *buff, char *tmp)
+{
+	char	*line;
+
+	line = ft_strjoin(buff, tmp);
+	if (!line)
+	{
+		free(buff);
+		return (NULL);
+	}
+	free(buff);
+	return (line);
+}
+
+/*
+** Find next line and remove it from buffer.
+*/
+static char	*next_line(char *buff)
 {
 	size_t	len;
-	char	*save;
+	size_t	i;
+	char	*next_line;
 
 	len = 0;
-	while (line[len] != '\n' && line[len] != '\0')
+	while (buff[len] && buff[len] != '\n')
 		len++;
-	if (line[len] == '\0' || line[0] == '\0')
-		return (NULL);
-	save = ft_substr(line, len + 1, ft_strlen(line) - len);
-	if (!save)
-		return (NULL);
-	if (*save == '\0')
+	if (!buff[len])
 	{
-		free(save);
-		save = NULL;
+		free(buff);
+		return (NULL);
 	}
-	line[len + 1] = '\0';
-	return (save);
+	next_line = ft_calloc((ft_strlen(buff) - len + 1), sizeof(char));
+	if (!next_line)
+	{
+		free(buff);
+		return (NULL);
+	}
+	len++;
+	i = 0;
+	while (buff[len])
+		next_line[i++] = buff[len++];
+	free(buff);
+	return (next_line);
 }
 
-static char	*read_line(int fd, char *buffer, char *save)
+/*
+** Allocate mem for line and copy buff to line.
+*/
+static char	*get_line(char *buff)
+{
+	size_t	len;
+	char	*ret_line;
+
+	len = 0;
+	if (!buff[len])
+		return (NULL);
+	while (buff[len] && buff[len] != '\n')
+		len++;
+	ret_line = ft_calloc(len + 2, sizeof(char));
+	if (!ret_line)
+		return (NULL);
+	len = 0;
+	while (buff[len] && buff[len] != '\n')
+	{
+		ret_line[len] = buff[len];
+		len++;
+	}
+	if (buff[len] && buff[len] == '\n')
+		ret_line[len++] = '\n';
+	return (ret_line);
+}
+
+/*
+** Read file and break if buffer has NL.
+*/
+static char	*read_file(int fd, char *buff, char *tmp)
 {
 	int		nbytes;
-	char	*tmp_save;
 
 	nbytes = 1;
-	while (nbytes != 0)
+	while (nbytes > 0)
 	{
-		nbytes = read(fd, buffer, BUFFER_SIZE);
+		nbytes = read(fd, tmp, BUFFER_SIZE);
 		if (nbytes == -1)
+		{
+			free(tmp);
 			return (NULL);
-		else if (nbytes == 0)
-			break ;
-		buffer[nbytes] = '\0';
-		if (!save)
-			save = ft_strdup("");
-		if (!save)
+		}
+		tmp[nbytes] = '\0';
+		buff = join_free(buff, tmp);
+		if (!buff)
+		{
+			free(tmp);
 			return (NULL);
-		tmp_save = save;
-		save = ft_strjoin(tmp_save, buffer);
-		if (!save)
-			return (NULL);
-		free(tmp_save);
-		tmp_save = NULL;
-		if (ft_strchr (buffer, '\n'))
+		}
+		if (ft_strchr(tmp, '\n'))
 			break ;
 	}
-	return (save);
+	free(tmp);
+	return (buff);
 }
 
+/*
+** Error handling, read, get line and next line.
+*/
 char	*get_next_line(int fd)
 {
-	char		*line;
-	char		*buffer;
-	static char	*save;
+	static char	*buff;
+	char		*ret_line;
+	char		*tmp;
 
-	if (fd < 0 || fd > MAX_FD || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd > MAX_FD || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
-	buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buffer)
+	if (!buff)
+		buff = ft_calloc(1, 1);
+	if (!buff)
 		return (NULL);
-	line = read_line(fd, buffer, save);
-	free(buffer);
-	buffer = NULL;
-	if (!line)
+	tmp = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	if (!tmp)
 		return (NULL);
-	save = get_line(line);
-	return (line);
+	buff = read_file(fd, buff, tmp);
+	if (!buff)
+		return (NULL);
+	ret_line = get_line(buff);
+	buff = next_line(buff);
+	return (ret_line);
 }

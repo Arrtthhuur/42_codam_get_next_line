@@ -6,7 +6,7 @@
 /*   By: abeznik <abeznik@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/08 18:12:30 by abeznik       #+#    #+#                 */
-/*   Updated: 2021/11/16 16:01:31 by abeznik       ########   odam.nl         */
+/*   Updated: 2021/11/18 13:26:54 by abeznik       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,25 +21,24 @@ int	main(void)
 {
 	int		fd;
 	int		count;
-	char	*file_name;
 	char	*line;
+	FILE	*fp;
 
 	count = 10;
-	file_name = "tests/test0";
-	// file_name = "tests/medium_plus_file";
-	// file_name = "tests/lots_of_new_line";
-	fd = open(file_name, O_RDONLY);
+	fd = open("input.txt", O_RDONLY);
+	fp = fopen("output.txt", "w+");
 	line = get_next_line(fd);
 	while (count > 0)
 	{
-		printf("%s", line);
+		fputs(line, fp);
 		free(line);
 		line = get_next_line(fd);
 		count--;
 	}
 	free(line);
-	// while (1)
-	// {}
+	fclose(fp);
 	close(fd);
+	while (1)
+	{}
 	return (0);
 }
