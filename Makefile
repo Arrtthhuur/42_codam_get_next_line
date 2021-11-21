@@ -6,7 +6,7 @@
 #    By: abeznik <abeznik@student.codam.nl>           +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/11/08 18:26:29 by abeznik       #+#    #+#                  #
-#    Updated: 2021/11/17 16:40:03 by abeznik       ########   odam.nl          #
+#    Updated: 2021/11/19 13:28:34 by abeznik       ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ MAIN	=	$(MAINS:.c=.o)
 
 CC		=	gcc
 RM		=	rm -f
-CFLAGS	=	-Wall -Werror -Wextra -D BUFFER_SIZE=1
+CFLAGS	=	-Wall -Werror -Wextra -D BUFFER_SIZE=42
 # CFLAGS	=	-D BUFFER_SIZE=29
 
 NAME	=	get_next_line.a

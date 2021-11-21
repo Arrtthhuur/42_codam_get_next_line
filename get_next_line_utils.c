@@ -6,7 +6,7 @@
 /*   By: abeznik <abeznik@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/08 18:18:25 by abeznik       #+#    #+#                 */
-/*   Updated: 2021/11/18 13:32:10 by abeznik       ########   odam.nl         */
+/*   Updated: 2021/11/19 13:35:56 by abeznik       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 	i = 0;
 	total_len = ft_strlen(s1) + ft_strlen(s2);
-	// ptr = malloc(sizeof(char) * (total_len + 1));
-	ptr = NULL;
+	ptr = malloc(sizeof(char) * (total_len + 1));
 	if (!ptr || !s1 || !s2)
 		return (NULL);
 	while (s1[i])
@@ -48,7 +47,6 @@ char	*ft_strchr(const char *s, int c)
 	char	*str;
 
 	str = (char *)s;
-	// return (NULL);
 	while (*str != c && *str)
 		str++;
 	if (*str == c)
@@ -75,8 +73,7 @@ void	*ft_calloc(size_t count, size_t size)
 {
 	void	*ptr;
 
-	// ptr = (void *)malloc(count * size);
-	ptr = NULL;
+	ptr = (void *)malloc(count * size);
 	if (!ptr)
 		return (NULL);
 	ft_bzero(ptr, count * size);

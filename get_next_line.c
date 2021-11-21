@@ -6,7 +6,7 @@
 /*   By: abeznik <abeznik@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/08 18:17:34 by abeznik       #+#    #+#                 */
-/*   Updated: 2021/11/18 13:32:36 by abeznik       ########   odam.nl         */
+/*   Updated: 2021/11/19 13:38:45 by abeznik       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 #include <unistd.h> // read
 #include <stdlib.h> // free
-#include <stdio.h>
 
 #define MAX_FD 1024
 
@@ -26,12 +25,9 @@ static char	*join_free(char *buff, char *tmp)
 	char	*line;
 
 	line = ft_strjoin(buff, tmp);
-	if (!line)
-	{
-		free(buff);
-		return (NULL);
-	}
 	free(buff);
+	if (!line)
+		return (NULL);
 	return (line);
 }
 
@@ -107,6 +103,7 @@ static char	*read_file(int fd, char *buff, char *tmp)
 		if (nbytes == -1)
 		{
 			free(tmp);
+			free(buff);
 			return (NULL);
 		}
 		tmp[nbytes] = '\0';
@@ -135,9 +132,11 @@ char	*get_next_line(int fd)
 	if (fd < 0 || fd > MAX_FD || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
 	if (!buff)
+	{
 		buff = ft_calloc(1, 1);
-	if (!buff)
-		return (NULL);
+		if (!buff)
+			return (NULL);
+	}
 	tmp = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!tmp)
 		return (NULL);

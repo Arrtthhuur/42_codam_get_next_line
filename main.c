@@ -6,7 +6,7 @@
 /*   By: abeznik <abeznik@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/08 18:12:30 by abeznik       #+#    #+#                 */
-/*   Updated: 2021/11/18 13:26:54 by abeznik       ########   odam.nl         */
+/*   Updated: 2021/11/20 19:33:53 by abeznik       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ int	main(void)
 	while (count > 0)
 	{
 		fputs(line, fp);
+		// printf("%s", line);
 		free(line);
 		line = get_next_line(fd);
 		count--;
